@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  django:
+    image: vkmguy/ml-training-hub
+    container_name: mlTrainingHub
+    hostname: mlTrainingHub
+    build:
+      context: .
+    command: bash -c "python manage.py migrate && gunicorn ml_training_hub.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8001:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: ml_training_hub.settings
+    networks:
+      - docker-configurations_pg_net
+      - docker-configurations_kafka_net
+
+
+  kafka_consumer:
+    image: vkmguy/ml-training-hub-kafka-consumer
+    hostname: mlTrainingKafkaConsumer
+    container_name: mlTrainingKafkaConsumer
+    build:
+      context: .
+      dockerfile: Dockerfile_kafka_consumer
+    volumes:
+      - .:/usr/src/app
+    environment:
+      DJANGO_SETTINGS_MODULE: ml_training_hub.settings
+      KAFKA_BROKER: kafka:19092
+    networks:
+      - docker-configurations_kafka_net
+      - docker-configurations_pg_net
+
+networks:
+  docker-configurations_kafka_net:
+    external: true
+  docker-configurations_pg_net:
+    external: true
