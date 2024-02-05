@@ -3,7 +3,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
+from sklearn.metrics import accuracy_score
 
 
 def train_ml_algorithm_rf(data):

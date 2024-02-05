@@ -1,6 +1,5 @@
 from django.core.management import BaseCommand
 
-from ml_app.ml_algorithm import train_ml_algorithm_rf
 from ml_app.tasks import train_ml_model_task
 
 
