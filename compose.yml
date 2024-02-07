@@ -7,7 +7,11 @@ services:
     hostname: mlTrainingHub
     build:
       context: .
-    command: bash -c "python manage.py migrate && gunicorn ml_training_hub.wsgi:application --bind 0.0.0.0:8000"
+    command: >
+      bash -c "python manage.py makemigrations && python manage.py migrate && 
+      gunicorn ml_training_hub.wsgi:application --bind 0.0.0.0:8000 &&
+      celery -A ml_training_hub beat --detach &&
+      celery -A ml_training_hub worker -l info"
     volumes:
       - .:/usr/src/app
     ports:

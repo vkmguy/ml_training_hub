@@ -23,5 +23,4 @@ urlpatterns = [
     path('trainModel', train_ml_model, name='train_ml_model'),
     path('predict', get_ml_prediction, name='get_ml_prediction'),
     path('visualize_model', visualize_model, name='visualize_model'),
-    path('visualization', visualization_page, name='visualization_page'),
 ]
