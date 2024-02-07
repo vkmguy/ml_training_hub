@@ -18,12 +18,11 @@ class StockData(models.Model):
 
 
 class MLAccuracy(models.Model):
-    strategy = models.CharField(max_length=255)
-    accuracy = models.FloatField()
+    metrics = models.JSONField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Strategy: {self.strategy}, Accuracy: {self.accuracy}% ({self.timestamp})"
+        return f" Metrics: {self.metrics}% ({self.timestamp})"
 
 
 class InputData(models.Model):

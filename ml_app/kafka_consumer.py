@@ -6,7 +6,7 @@ from ml_training_hub.settings import KAFKA_TOPIC
 from .ml_algorithm import train_ml_algorithm_rf
 import json
 
-from .models import MLAccuracy
+from .models import MLMetrics, MLAccuracy
 
 
 def consume_kafka_messages():
@@ -37,8 +37,8 @@ def consume_kafka_messages():
                     break
 
             data = json.loads(msg.value().decode('utf-8'))
-            accuracy = train_ml_algorithm_rf(data)
-            MLAccuracy.objects.create(accuracy=accuracy)
+            metrics = train_ml_algorithm_rf(data)
+            MLAccuracy.objects.create(metrics=metrics)
 
     except KeyboardInterrupt:
         pass

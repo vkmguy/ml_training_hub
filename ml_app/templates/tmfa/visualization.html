@@ -1,0 +1,55 @@
+<!-- visualization.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Metrics Visualization</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            // Fetch metrics data
+            fetch('/api/visualize_model')
+                .then(response => response.json())
+                .then(data => {
+                    // Filter out null values and convert timestamps to Date objects
+                    const filteredData = data.filter(item => item.metrics.accuracy !== null);
+                    filteredData.forEach(item => {
+                        item.timestamp = new Date(item.timestamp);
+                    });
+
+                    // Draw charts for accuracy, precision, and recall
+                    drawChart('accuracy_chart', filteredData, 'Accuracy');
+                    drawChart('precision_chart', filteredData, 'Precision');
+                    drawChart('recall_chart', filteredData, 'Recall');
+                });
+        }
+
+        function drawChart(elementId, data, title) {
+            var chartData = google.visualization.arrayToDataTable([
+                ['Timestamp', title],
+                ...data.map(item => [item.timestamp, item.metrics[title.toLowerCase()]])
+            ]);
+
+            var options = {
+                title: title,
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById(elementId));
+            chart.draw(chartData, options);
+        }
+    </script>
+</head>
+<body>
+    <h1>Model Metrics Visualization</h1>
+    <div id="accuracy_chart" style="width: 100%; height: 300px;"></div>
+    <div id="precision_chart" style="width: 100%; height: 300px;"></div>
+    <div id="recall_chart" style="width: 100%; height: 300px;"></div>
+</body>
+</html>

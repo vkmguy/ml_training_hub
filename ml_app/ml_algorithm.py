@@ -2,8 +2,9 @@
 import joblib
 import numpy as np
 import pandas as pd
+from django.http import JsonResponse
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 
 def train_ml_algorithm_rf(data):
@@ -35,8 +36,16 @@ def train_ml_algorithm_rf(data):
 
     accuracy = accuracy_score(y_test, predictions)
     print(f'Accuracy Test Set: {accuracy:.2f}')
-
-    # Save the model to a file
+    precision = precision_score(y_test, predictions, average='binary', pos_label=1)
+    print(f'Precision Test Set: {precision:.2f}')
+    recall = recall_score(y_test, predictions, average='binary', pos_label=1)
+    print(f'Recall Test Set: {recall:.2f}')
     joblib.dump(model, 'random_forest_classifier.joblib')
 
-    return accuracy
+    metrics = {
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall
+    }
+
+    return metrics

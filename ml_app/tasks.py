@@ -1,6 +1,4 @@
 # tasks.py
-from celery import shared_task
-from django.core.management import call_command
 
 from ml_app.ml_algorithm import train_ml_algorithm_rf
 from ml_app.models import StockData, MLAccuracy
@@ -15,5 +13,10 @@ def train_ml_model_task():
     serializer = StockDataSerializer(tagged_data, many=True)
 
     # Perform ML model training
-    accuracy = train_ml_algorithm_rf(serializer.data)
-    MLAccuracy.objects.create(accuracy=accuracy)
+    metrics = train_ml_algorithm_rf(serializer.data)
+    metrics_to_save = {
+        'accuracy': metrics.get('accuracy'),
+        'precision': metrics.get('precision'),
+        'recall': metrics.get('recall')
+    }
+    MLAccuracy.objects.create(metrics=metrics_to_save)

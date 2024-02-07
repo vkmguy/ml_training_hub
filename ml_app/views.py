@@ -6,6 +6,7 @@ import joblib
 import numpy as np
 from django.db import transaction
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -28,8 +29,16 @@ def train_ml_model(request):
 @api_view(['GET'])
 @csrf_exempt
 def get_ml_accuracies(request):
-    daily_accuracies = MLAccuracy.objects.values('timestamp', 'strategy', 'accuracy').order_by('-timestamp')[:10]
+    daily_accuracies = MLAccuracy.objects.values('timestamp', 'metrics').order_by('-timestamp')[:10]
     serializer = MLAccuracySerializer(daily_accuracies, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def visualize_model(request):
+    latest_metrics = MLAccuracy.objects.values('timestamp', 'metrics').order_by('-timestamp')
+    serializer = MLAccuracySerializer(latest_metrics, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -52,3 +61,7 @@ def get_ml_prediction(request):
         return JsonResponse({'prediction': prediction[0]})
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+
+def visualization_page(request):
+    return render(request, 'tmfa/visualization.html')
