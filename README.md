@@ -1,4 +1,4 @@
-# Stock Market ML App Docker Compose Setup
+# Stock Market ML App
 
 ## Prerequisites
 
